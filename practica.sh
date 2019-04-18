@@ -6,7 +6,10 @@
 # xargs => takes the input from the previous command and passes it as argument to ping
 # | (pipe) => connects two commands through standard file interface
 
-cat input.txt | awk '{print $1}' | xargs -n 1 ping -c 1
+awk '{print $1}' input.txt | xargs -r -I '{}' \
+  bash -c "echo '{}' | grep -q -e ':' && \
+    ping6 -c 1 '{}' -W 1 || \
+    ping -c 1 '{}' -W 1"
 
 #TODO Dan: Print the first x numbers from Fibonacci in a file
 
